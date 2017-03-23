@@ -3,11 +3,11 @@ var router = express.Router();
 var slug = require('slug')
 // SETUP schema
 let Article = require("../models/articleSchema.js");
-
 var methods = {}
 
 methods.getAll = function (req, res, next) {
     Article.find()
+        .populate('author')
         .then(function (result) {
             res.send(result)
         })

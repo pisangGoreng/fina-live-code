@@ -1,0 +1,210 @@
+<script type="text/javascript">
+    if (window.localStorage.token) {
+        console.log('ada isi');
+    } else {
+        window.location.href = "index.html";
+    }
+</script>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script type="text/javascript" src="./bower_components/axios/dist/axios.js"></script>
+    <script type="text/javascript" src="./bower_components/vue/dist/vue.js"></script>
+    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script type="text/javascript" src="http://netdna.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <link href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="http://pingendo.github.io/pingendo-bootstrap/themes/default/bootstrap.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="./css/styleLogin.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.1/js/materialize.min.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <div class="navbar navbar-default navbar-static-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-ex-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+                    <a class="navbar-brand" href="#"><span>Brand</span></a>
+                </div>
+                <div class="collapse navbar-collapse" id="navbar-ex-collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="active">
+                            <a href="#">Logout</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="section">
+            <div class="container">
+                <div class="row">
+                </div>
+                <div class="col-md-8">
+                    <!-- isi content -->
+                    <div class="section">
+                        <div class="container" v-for="content in contents">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <img src="http://pingendo.github.io/pingendo-bootstrap/assets/placeholder.png" class="img-responsive">
+                                </div>
+                                <div class="col-md-6">
+                                    <h1> {{ content.title }} </h1>
+                                    <h3>Author: {{ content.author.username }} </h3>
+                                    <p> {{ content.content }} </p>
+                                    <a href="#" @click.prevent="edit(content.slug)">Edit</a>
+                                    <a href="#" @click.prevent="delete(content.slug)">Delete</a>
+                                </div>
+                            </div>
+                            <br>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p>Tambah artikel baru</p>
+            <form>
+                <input type="text" v-model="postData.title" placeholder="isi title">
+                <input type="text" v-model="postData.content" placeholder="isi Content">
+                <br>
+                <input type="submit" name="" value="Tambah artikel" @click.prevent="add">
+                <!-- <button type="submit" v-on:click.prevent="postData()" class="btn btn-primary">Save product</button> -->
+            </form>
+        </div>
+        <footer class="section section-primary">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <h1>Footer header</h1>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisici elit,
+                            <br>sed eiusmod tempor incidunt ut labore et dolore magna aliqua.
+                            <br>Ut enim ad minim veniam, quis nostrud</p>
+                    </div>
+                    <div class="col-sm-6">
+                        <p class="text-info text-right">
+                            <br>
+                            <br>
+                        </p>
+                        <div class="row">
+                            <div class="col-md-12 hidden-lg hidden-md hidden-sm text-left">
+                                <a href="#"><i class="fa fa-3x fa-fw fa-instagram text-inverse"></i></a>
+                                <a href="#"><i class="fa fa-3x fa-fw fa-twitter text-inverse"></i></a>
+                                <a href="#"><i class="fa fa-3x fa-fw fa-facebook text-inverse"></i></a>
+                                <a href="#"><i class="fa fa-3x fa-fw fa-github text-inverse"></i></a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 hidden-xs text-right">
+                                <a href="#"><i class="fa fa-3x fa-fw fa-instagram text-inverse"></i></a>
+                                <a href="#"><i class="fa fa-3x fa-fw fa-twitter text-inverse"></i></a>
+                                <a href="#"><i class="fa fa-3x fa-fw fa-facebook text-inverse"></i></a>
+                                <a href="#"><i class="fa fa-3x fa-fw fa-github text-inverse"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {{dataUser}}
+        </footer>
+    </div>
+</body>
+
+</html>
+<script type="text/javascript">
+</script>
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+            contents: [],
+            dataUser: [],
+            getData: [],
+            postData: {
+                title: "",
+                content: "",
+                author: "58d3785897896428699bec3f"
+            }
+        },
+        created() {
+            this.getContents()
+            this.decodeToken()
+        },
+        methods: {
+            decodeToken() {
+                var base64Url = window.localStorage.token.split('.')[1];
+                var base64 = base64Url.replace('-', '+').replace('_', '/');
+                this.dataUser = JSON.parse(window.atob(base64));
+            },
+            getContents() {
+                // let self = this
+                var config = {
+                    headers: {
+                        'token': window.localStorage.token
+                    }
+                }
+                axios.get('http://localhost:3000/content', config).then(function(response) {
+                    this.app.contents = response.data
+                    // console.log(JSON.stringify(this.app.questions));
+                })
+            },
+            add: function() {
+                console.log(JSON.stringify(app.postData));
+                // Send a POST request
+                var config = {
+                    headers: {
+                        'token': window.localStorage.token
+                    }
+                }
+                axios.post('http://localhost:3000/content', app.postData, config)
+                    .then((response) => {
+                        console.log(response.data)
+                        app.contents.push(response.data)
+                    })
+                    .catch((error) => {
+                        console.log(error)
+                    })
+            },
+            delete: (slug) => {
+                var config = {
+                    headers: {
+                        'token': window.localStorage.token
+                    }
+                }
+                console.log(slug);
+                axios.delete(`http://localhost:3000/content/${slug}`, config)
+                    .then((response) => {
+                        console.log('sudah dihapus');
+                    })
+                    .catch((error) => {
+                        console.log(error)
+                    })
+            },
+            edit: (slug) => {
+                var config = {
+                    headers: {
+                        'token': window.localStorage.token
+                    }
+                }
+                let self = this
+                axios.put(`http://localhost:3000/api/house/${slug}`, app.getData, config)
+                    .then((response) => {
+                        console.log('data berhasil dirubah');
+                    })
+                    .catch((error) => {
+                        console.log(error)
+                    })
+            }
+        }
+    })
+</script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
+        $('.modal').modal();
+    });
+</script>

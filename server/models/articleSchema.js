@@ -11,8 +11,8 @@ var articleSchema = mongoose.Schema({
     title: String,
     content: String,
     author: {
-        type: Schema.Types.ObjectId,
-        ref: 'userSchema'
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
     },
     slug: String,
 }, {
