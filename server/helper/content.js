@@ -44,13 +44,30 @@ methods.post = function (req, res, next) {
 
 methods.delete = function (req, res, next) {
     Article.findOneAndRemove({
-        dataId: req.params.dataId
-    }, function (err, Food) {
+        slug: req.params.slug
+    }, function (err, result) {
         var response = {
-            message: `Food with dataId ${req.params.dataId} successfully deleted`,
-            id: Food._id
+            message: `article with dataId ${req.params.slug} successfully deleted`,
+            id: Article._id
         };
         res.send(response);
+    });
+}
+
+methods.put = function (req, res, next) {
+    Article.findOneAndUpdate({
+        slug: req.params.slug
+    }, {
+        $set: {
+            title: req.body.title,
+            content: req.body.content,
+            slug: slug(req.body.title)
+        }
+    }, {
+        new: true
+    }, function (err, result) {
+        if (err) return res.send(err.message);
+        res.send(result);
     });
 }
 

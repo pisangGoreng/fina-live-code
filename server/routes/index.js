@@ -15,6 +15,7 @@ router.post('/login', oauth.login)
 router.get('/content', jwt.verify, helperContent.getAll);
 router.get('/content/:slug', jwt.verify, helperContent.getOne);
 router.post('/content', jwt.verify, helperContent.post);
-router.post('/delete/:slug', jwt.verify, helperContent.delete);
+router.delete('/content/:slug', jwt.verify, helperContent.delete);
+router.put('/content/:slug', jwt.verify, helperContent.put);
 
 module.exports = router;
