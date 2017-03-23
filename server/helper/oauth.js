@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 // SETUP mongoose
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/login');
+mongoose.connect('mongodb://localhost/cms');
 // SETUP jwt
 let jwt = require('jsonwebtoken');
 // SETUP passport
